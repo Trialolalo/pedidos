@@ -1,0 +1,34 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+body{
+    background-image: linear-gradient(hsla(234, 100%, 50%, 0.11), hsl(340, 100%, 70%), hsl(24, 100%, 50%),  hsl(340, 100%, 70%), hsl(225, 100%, 60%));
+    margin: 0 auto;
+    justify-content: center;
+    max-height: 100vh;
+    height: 100vh;
+    min-height: 100vh;
+    align-items: center;
+}
+
+header{
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+main{
+    margin-top: 40vh;
+}
+
+button{
+    background: none;
+    border: none;
+}
+
+slot svg{
+    fill: white;
+    width: 2rem;
+}
