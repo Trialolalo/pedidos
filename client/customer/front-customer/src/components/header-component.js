@@ -2,6 +2,7 @@ class Header extends HTMLElement {
   constructor () {
     super()
     this.shadow = this.attachShadow({ mode: 'open' })
+    this.title = this.getAttribute('title')
   }
 
   connectedCallback () {
@@ -20,17 +21,18 @@ class Header extends HTMLElement {
 
             header{
               background-color: hsl(0, 0%, 0%);
-              justify-content: space-between;
             }
 
             .row{
               display: flex;
+              justify-content: space-between;
+              align-items: center;
             }
         </style>
   
         <header>
           <div class="row">
-            <title-component title="Inicio"></title-component>
+            <title-component title="${this.title}"></title-component>
               <div class="icon">
                 <slot name="button"></slot>
               </div>

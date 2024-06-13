@@ -1,4 +1,4 @@
-class HomeButton extends HTMLElement {
+class BackButton extends HTMLElement {
   constructor () {
     super()
     this.shadow = this.attachShadow({ mode: 'open' })
@@ -29,11 +29,11 @@ class HomeButton extends HTMLElement {
             }
         </style>
           
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-          <path d="M10,20V14H14V20H19V12H22L12,3L2,12H5V20H10Z"/>
-        </svg>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" />
+          </svg>
       `
   }
 }
 
-customElements.define('home-button-component', HomeButton)
+customElements.define('back-button-component', BackButton)
