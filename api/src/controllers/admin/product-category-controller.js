@@ -1,13 +1,26 @@
 const sequelizeDb = require('../../models/sequelize')
 const ProductCategory = sequelizeDb.ProductCategory
+const GraphService = require('../../services/graph-service')
+const Op = sequelizeDb.Sequelize.Op
 
 exports.create = (req, res) => {
-  ProductCategory.create(req.body).then(data => {
+
+  ProductCategory.create(req.body).then(async data => {
+    const graphService = new GraphService()
+    await graphService.createNode('ProductCategory', {id: data.id, name: data.name} )
+
     res.status(200).send(data)
   }).catch(err => {
-    res.status(500).send({
-      message: err.errors || 'Algún error ha surgido al insertar el dato.'
-    })
+    console.log(err)
+    if (err.errors) {
+      res.status(422).send({
+        message: err.errors
+      })
+    } else {
+      res.status(500).send({
+        message: 'Algún error ha surgido al insertar el dato.'
+      })
+    }
   })
 }
 
@@ -15,8 +28,18 @@ exports.findAll = (req, res) => {
   const page = req.query.page || 1
   const limit = parseInt(req.query.size) || 10
   const offset = (page - 1) * limit
+  const whereStatement = {}
+
+  for (const key in req.query) {
+    if (req.query[key] !== '' && req.query[key] !== 'null' && key !== 'page' && key !== 'size') {
+      whereStatement[key] = { [Op.substring]: req.query[key] }
+    }
+  }
+
+  const condition = Object.keys(whereStatement).length > 0 ? { [Op.and]: [whereStatement] } : {}
 
   ProductCategory.findAndCountAll({
+    where: condition,
     attributes: ['id', 'name', 'createdAt', 'updatedAt'],
     limit,
     offset,
@@ -26,11 +49,13 @@ exports.findAll = (req, res) => {
       result.meta = {
         total: result.count,
         pages: Math.ceil(result.count / limit),
-        currentPage: page
+        currentPage: page,
+        size: limit
       }
 
       res.status(200).send(result)
     }).catch(err => {
+      console.log(err)
       res.status(500).send({
         message: err.errors || 'Algún error ha surgido al recuperar los datos.'
       })
@@ -72,7 +97,7 @@ exports.update = (req, res) => {
     }
   }).catch(_ => {
     res.status(500).send({
-      message: 'Algún error ha surgido al actualizar la id=' + id
+      message: 'Algún error ha surgido al actualiazar la id=' + id
     })
   })
 }
@@ -95,6 +120,18 @@ exports.delete = (req, res) => {
   }).catch(_ => {
     res.status(500).send({
       message: 'Algún error ha surgido al borrar la id=' + id
+    })
+  })
+}
+
+
+exports.getCategories = (req, res) => {
+  ProductCategory.findAll().then(data => {
+    res.status(200).send(data)
+  }).catch(err => {
+    console.log(err)
+    res.status(500).send({
+      message: err.errors || 'Algún error ha surgido al recuperar los datos.'
     })
   })
 }

@@ -5,7 +5,8 @@ class PageComponent extends HTMLElement {
     this.basePath = this.getAttribute('base-path') || ''
   }
 
-  connectedCallback () {
+  async connectedCallback () {
+    await this.getRoutes()
     this.render()
     window.onpopstate = () => this.handleRouteChange()
   }
@@ -14,20 +15,28 @@ class PageComponent extends HTMLElement {
     this.render()
   }
 
+  async getRoutes(){
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/routes`)
+
+    if (response.ok) {
+      this.routes = await response.json()
+    } else {
+      const data = await response.json()
+
+      if (data.redirection) {
+        window.location.href = data.redirection
+      }
+    }
+  }
+
   render () {
     const path = window.location.pathname
     this.getTemplate(path)
   }
 
   async getTemplate (path) {
-    const routes = {
-      '/admin/client': 'client.html',
-      '/admin/faqs': 'faqs.html',
-      '/admin/user': 'user.html'
 
-    }
-
-    const filename = routes[path] || '404.html'
+    const filename = this.routes[path] || '404.html'
 
     await this.loadPage(filename)
   }

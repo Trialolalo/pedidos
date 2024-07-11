@@ -1,5 +1,6 @@
 const bcrypt = require('bcryptjs')
 const sequelizeDb = require('../../models/sequelize')
+const jwt = require('jsonwebtoken')
 const CustomerCredential = sequelizeDb.CustomerCredential
 
 exports.signin = async (req, res) => {
@@ -34,13 +35,15 @@ exports.signin = async (req, res) => {
       })
     }
 
-    req.session.user = { id: data.id, admin: true }
+    const token = jwt.sign({ customerId: data.customerId, type: 'customer' }, process.env.JWT_SECRET, {
+      expiresIn: 86400
+    })
 
     res.status(200).send({
-      redirection: '/admin'
+      customerAccessToken: token,
+      redirection: '/cliente'
     })
   } catch (err) {
-    console.log(err)
     res.status(500).send({ message: err.message || 'Algún error ha surgido al recuperar los datos.' })
   }
 }
@@ -48,11 +51,11 @@ exports.signin = async (req, res) => {
 exports.checkSignin = (req, res) => {
   if (req.session.user) {
     res.status(200).send({
-      redirection: '/admin'
+      redirection: '/cliente'
     })
   } else {
     res.status(401).send({
-      redirection: '/admin/login'
+      redirection: '/cliente/login'
     })
   }
 }

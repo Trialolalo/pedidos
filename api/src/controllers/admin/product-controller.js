@@ -1,13 +1,34 @@
 const sequelizeDb = require('../../models/sequelize')
 const Product = sequelizeDb.Product
+const Op = sequelizeDb.Sequelize.Op
+const PriceManagementService = require('../../services/price-management-service.js')
+const GraphService = require('../../services/graph-service.js')
 
 exports.create = (req, res) => {
-  Product.create(req.body).then(data => {
+  Product.create(req.body).then(async data => {
+    
+    const priceManagementService = new PriceManagementService()
+    await priceManagementService.createPrice(data.id, req.body.price)
+
+    const graphService = new GraphService()
+    await graphService.createNode('Product', {id: data.id, name: data.name, reference: data.reference, price: req.body.price.basePrice} )
+    await graphService.createRelation('Product', 'BELONGS_TO', 'ProductCategory', {
+      entityId : data.id,
+      relatedEntityId: req.body.productCategoryId
+    })
+
     res.status(200).send(data)
   }).catch(err => {
-    res.status(500).send({
-      message: err.errors || 'Algún error ha surgido al insertar el dato.'
-    })
+    console.log(err)
+    if (err.errors) {
+      res.status(422).send({
+        message: err.errors
+      })
+    } else {
+      res.status(500).send({
+        message: 'Algún error ha surgido al insertar el dato.'
+      })
+    }
   })
 }
 
@@ -15,9 +36,19 @@ exports.findAll = (req, res) => {
   const page = req.query.page || 1
   const limit = parseInt(req.query.size) || 10
   const offset = (page - 1) * limit
+  const whereStatement = {}
+
+  for (const key in req.query) {
+    if (req.query[key] !== '' && req.query[key] !== 'null' && key !== 'page' && key !== 'size') {
+      whereStatement[key] = { [Op.substring]: req.query[key] }
+    }
+  }
+
+  const condition = Object.keys(whereStatement).length > 0 ? { [Op.and]: [whereStatement] } : {}
 
   Product.findAndCountAll({
-    attributes: ['id', 'name', 'createdAt', 'updatedAt'],
+    where: condition,
+    attributes: ['id', 'productCategoryId', 'name', 'reference', 'units', 'measurementUnit', 'measurement', 'visible', 'createdAt', 'updatedAt'],
     limit,
     offset,
     order: [['createdAt', 'DESC']]
@@ -26,7 +57,8 @@ exports.findAll = (req, res) => {
       result.meta = {
         total: result.count,
         pages: Math.ceil(result.count / limit),
-        currentPage: page
+        currentPage: page,
+        size: limit
       }
 
       res.status(200).send(result)
@@ -72,7 +104,7 @@ exports.update = (req, res) => {
     }
   }).catch(_ => {
     res.status(500).send({
-      message: 'Algún error ha surgido al actualizar la id=' + id
+      message: 'Algún error ha surgido al actualiazar la id=' + id
     })
   })
 }

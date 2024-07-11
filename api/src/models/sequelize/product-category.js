@@ -1,10 +1,10 @@
 module.exports = function (sequelize, DataTypes) {
   const ProductCategory = sequelize.define('ProductCategory', {
     id: {
-      type: DataTypes.INTEGER,
       autoIncrement: true,
-      primaryKey: true,
-      allowNull: false
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      primaryKey: true
     },
     name: {
       type: DataTypes.STRING,
@@ -14,10 +14,6 @@ module.exports = function (sequelize, DataTypes) {
           msg: 'Por favor, rellena el campo "Nombre".'
         }
       }
-    },
-    visible: {
-      type: DataTypes.BOOLEAN,
-      allowNull: false
     },
     createdAt: {
       type: DataTypes.DATE,
@@ -53,8 +49,7 @@ module.exports = function (sequelize, DataTypes) {
   })
 
   ProductCategory.associate = function (models) {
-    ProductCategory.hasMany(models.ProductCategoryRelation, { as: 'productCategoryRelations', foreignKey: 'productCategoryId' })
-    ProductCategory.belongsToMany(models.Product, { through: models.ProductCategoryRelation, as: 'products', foreignKey: 'productCategoryId' })
+    ProductCategory.hasMany(models.Product, { as: 'products', foreignKey: 'productCategoryId' })
   }
 
   return ProductCategory

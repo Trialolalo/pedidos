@@ -6,77 +6,65 @@ module.exports = function (sequelize, DataTypes) {
       primaryKey: true,
       allowNull: false
     },
-    countryId: {
-      type: DataTypes.INTEGER,
-      allowNull: false
-    },
-    cityId: {
-      type: DataTypes.INTEGER,
-      allowNull: false
-    },
-    dialCodeId: {
-      type: DataTypes.INTEGER,
-      allowNull: false
-    },
-    fiscalName: {
+    commercialAddress: {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
         notNull: {
-          msg: 'Por favor, rellena el campo "Nombre fiscal".'
+          msg: 'Por favor, rellena el campo "Dirección Commercial".'
+        },
+        notEmpty: {
+          msg: 'Por favor, rellena el campo "Dirección Commercial".'
         }
       }
-    },
-    comercialName: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      validate: {
-        notNull: {
-          msg: 'Por favor, rellena el campo "Nombre comercial".'
-        }
-      }
-    },
-    vat: {
-      type: DataTypes.STRING,
-      allowNull: false
-    },
-    comercialAddress: {
-      type: DataTypes.STRING,
-      allowNull: true
     },
     fiscalAddress: {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
         notNull: {
-          msg: 'Por favor, rellena el campo "Dirección fiscal".'
+          msg: 'Por favor, rellena el campo "Dirección Fiscal".'
+        },
+        notEmpty: {
+          msg: 'Por favor, rellena el campo "Dirección Fiscal".'
         }
       }
     },
-    postalCode: {
+    commercialName: {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
         notNull: {
-          msg: 'Por favor, rellena el campo "Código postal".'
+          msg: 'Por favor, rellena el campo "Nombre Commercial".'
+        },
+        notEmpty: {
+          msg: 'Por favor, rellena el campo "Nombre Commercial".'
         }
       }
     },
-    email: {
+    fiscalName: {
       type: DataTypes.STRING,
       allowNull: false,
-      unique: true,
       validate: {
         notNull: {
-          msg: 'Por favor, rellena el campo "Email".'
+          msg: 'Por favor, rellena el campo "Nombre Fiscal".'
+        },
+        notEmpty: {
+          msg: 'Por favor, rellena el campo "Nombre Fiscal".'
         }
       }
     },
-    web: {
-      type: DataTypes.STRING
-    },
-    telephone: {
-      type: DataTypes.STRING
+    vatNumber: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notNull: {
+          msg: 'Por favor, rellena el campo "NIF".'
+        },
+        notEmpty: {
+          msg: 'Por favor, rellena el campo "NIF".'
+        }
+      }
     },
     createdAt: {
       type: DataTypes.DATE,
@@ -107,35 +95,12 @@ module.exports = function (sequelize, DataTypes) {
         fields: [
           { name: 'id' }
         ]
-      },
-      {
-        name: 'companies_countryId_fk',
-        using: 'BTREE',
-        fields: [
-          { name: 'countryId' }
-        ]
-      },
-      {
-        name: 'companies_cityId_fk',
-        using: 'BTREE',
-        fields: [
-          { name: 'cityId' }
-        ]
-      },
-      {
-        name: 'companies_dialCodeId_fk',
-        using: 'BTREE',
-        fields: [
-          { name: 'dialCodeId' }
-        ]
       }
     ]
   })
 
   Company.associate = function (models) {
-    Company.belongsTo(models.Country, { as: 'country', foreignKey: 'countryId' })
-    Company.belongsTo(models.City, { as: 'city', foreignKey: 'cityId' })
-    Company.belongsTo(models.DialCode, { as: 'dialCode', foreignKey: 'dialCodeId' })
+
   }
 
   return Company

@@ -14,13 +14,13 @@ class Products extends HTMLElement {
   }
 
   async loadData () {
-    this.data = [
-      {
-        id: '1',
-        title: 'Stray',
-        price: 22.00
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/customer/products`, {
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('customerAccessToken'),
       }
-    ]
+    })
+    
+    this.data = await response.json()
   }
 
   render () {
@@ -150,11 +150,15 @@ class Products extends HTMLElement {
       productContainer.appendChild(text)
 
       const title = document.createElement('h4')
-      title.textContent = product.title
+      title.textContent = product.name
       text.appendChild(title)
 
+      const details = document.createElement('span')
+      details.textContent = `${product.units}u, ${product.measurement}${product.measurementUnit}`
+      text.appendChild(details)
+
       const price = document.createElement('h4')
-      price.textContent = `${product.price} €`
+      price.textContent = `${product.price.basePrice} €`
       text.appendChild(price)
 
       const quantity = document.createElement('div')
@@ -181,7 +185,7 @@ class Products extends HTMLElement {
 
         store.dispatch(updateCart({
           ...product,
-          quantity: productQuantity.textContent
+          quantity: parseInt(productQuantity.textContent)
         }))
       })
 
@@ -191,11 +195,10 @@ class Products extends HTMLElement {
 
           store.dispatch(updateCart({
             ...product,
-            quantity: productQuantity.textContent
+            quantity: parseInt(productQuantity.textContent)
           }))
         }
 
-        console.log(store.getState())
       })
 
       const divider = document.createElement('div')

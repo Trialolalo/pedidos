@@ -21,7 +21,7 @@ button{
     border: none;
 }
 
-.container{
+.crud{
     display: flex;
     gap: 3rem;
 }

@@ -1,20 +1,15 @@
-<header>
+<header-component>
     <title-component></title-component>
     <menu-component></menu-component>
-</header>
+</header-component>
 
-<main>
+<main-component>
     <notification-component></notification-component>
     <filter-component></filter-component>
-    <image-gallery-component></image-gallery-component>
-    <div class="container">
+    <crud-component>
+        <table-component slot="table" endpoint="/api/admin/users"></table-component>
+        <user-form-component slot="form" endpoint="/api/admin/users"></user-form-component>
+    </crud-component>
+</main-component>
 
-        <div class="table-section">
-            <table-component endpoint="/api/admin/users"></table-component>
-        </div>
-        <destroy-component></destroy-component>
-        <div class="form-section">
-            <user-component endpoint="/api/admin/users"></form-component>
-        </div>
-    </div>
-</main>
+

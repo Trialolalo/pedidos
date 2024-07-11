@@ -9,11 +9,8 @@ module.exports = function (sequelize, DataTypes) {
     productId: {
       type: DataTypes.INTEGER
     },
-    taxId: {
-      type: DataTypes.INTEGER
-    },
     basePrice: {
-      type: DataTypes.DECIMAL
+      type: DataTypes.DECIMAL(10, 2)
     },
     current: {
       type: DataTypes.BOOLEAN
@@ -54,23 +51,12 @@ module.exports = function (sequelize, DataTypes) {
         fields: [
           { name: 'productId' }
         ]
-      },
-      {
-        name: 'prices_taxId_fk',
-        using: 'BTREE',
-        fields: [
-          { name: 'taxId' }
-        ]
       }
     ]
   })
 
   Price.associate = function (models) {
     Price.belongsTo(models.Product, { as: 'product', foreignKey: 'productId' })
-    Price.belongsTo(models.Tax, { as: 'tax', foreignKey: 'taxId' })
-    Price.hasMany(models.CartDetail, { as: 'cartDetails', foreignKey: 'priceId' })
-    Price.hasMany(models.PriceDiscount, { as: 'priceDiscounts', foreignKey: 'priceId' })
-    Price.hasMany(models.ReturnDetail, { as: 'returnDetails', foreignKey: 'priceId' })
     Price.hasMany(models.SaleDetail, { as: 'saleDetails', foreignKey: 'priceId' })
   }
 

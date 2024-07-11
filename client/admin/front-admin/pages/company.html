@@ -1,0 +1,13 @@
+<header-component>
+  <title-component></title-component>
+  <menu-component></menu-component>
+</header-component>
+
+<main-component>
+  <notification-component></notification-component>
+  <filter-component></filter-component>
+  <crud-component>
+      <table-component slot="table" endpoint="/api/admin/products"></table-component>
+      <product-form-component slot="form" endpoint="/api/admin/products"></product-form-component>
+  </crud-component>
+</main-component>
